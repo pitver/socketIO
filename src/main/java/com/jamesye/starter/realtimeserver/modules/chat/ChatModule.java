@@ -19,6 +19,7 @@ public class ChatModule {
 
     private final SocketIONamespace namespace;
 
+
     @Autowired
     public ChatModule(SocketIOServer server) {
         this.namespace = server.addNamespace("/chat");
