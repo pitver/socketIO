@@ -1,6 +1,7 @@
 package com.jamesye.starter.realtimeserver.modules.chat;
 
 import com.corundumstudio.socketio.HandshakeData;
+import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIONamespace;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
@@ -24,9 +25,10 @@ public class ChatModule {
         this.namespace.addConnectListener(onConnected());
         this.namespace.addDisconnectListener(onDisconnected());
         this.namespace.addEventListener("chat", ChatMessage.class, onChatReceived());
+        this.namespace.addEventListener("chat", ChatMessage.class, onChatReceived());
     }
 
-    private DataListener<ChatMessage> onChatReceived() {
+    public DataListener<ChatMessage> onChatReceived() {
         return (client, data, ackSender) -> {
             log.debug("Client[{}] - Received chat message '{}'", client.getSessionId().toString(), data);
             namespace.getBroadcastOperations().sendEvent("chat", data);
@@ -34,7 +36,7 @@ public class ChatModule {
     }
 
     private ConnectListener onConnected() {
-        return client -> {
+        return (SocketIOClient client) -> {
             HandshakeData handshakeData = client.getHandshakeData();
             log.debug("Client[{}] - Connected to chat module through '{}'", client.getSessionId().toString(), handshakeData.getUrl());
         };
@@ -45,5 +47,8 @@ public class ChatModule {
             log.debug("Client[{}] - Disconnected from chat module.", client.getSessionId().toString());
         };
     }
+
+
+
 
 }
